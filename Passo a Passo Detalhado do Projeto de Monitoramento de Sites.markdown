@@ -1,38 +1,15 @@
 # Passo a Passo Detalhado do Projeto de Monitoramento de Sites
 
-Este documento detalha todas as etapas realizadas no projeto de monitoramento de sites, desenvolvido como parte de um curso de DevSecOps. O objetivo do projeto era criar um script que verifica a disponibilidade de um site local a cada minuto e envia notificações ao Discord se o site estiver fora do ar. O projeto foi executado no Windows Subsystem for Linux (WSL) com Ubuntu, e este documento foi preparado para atender à solicitação do instrutor Thiago, incluindo todos os comandos, saídas, erros encontrados, soluções aplicadas e explicações completas.
+Este documento detalha todas as etapas realizadas no projeto de monitoramento de sites, desenvolvido como parte de um curso de DevSecOps. O objetivo do projeto era criar um script que verifica a disponibilidade de um site local a cada minuto e envia notificações ao Discord se o site estiver fora do ar. O projeto foi executado no Windows Subsystem for Linux (WSL) com Ubuntu, e este documento foi prepararado incluindo todos os comandos, saídas, erros encontrados, soluções aplicadas e explicações completas.
 
 ## 1. Configuração Inicial do Ambiente no WSL com Ubuntu
 
 ### 1.1. Verificar a Instalação do WSL
-Eu já tinha o WSL instalado no meu Windows 10, com o Ubuntu 20.04 como distribuição padrão. Para confirmar que estava funcionando:
+Eu já tinha o WSL instalado no meu Windows 10, com o Ubuntu como distribuição padrão. Para confirmar que estava funcionando:
 - **Comando**:
   ```bash
   wsl --list
   ```
-- **Saída Esperada**:
-  ```
-    wsl --list
-      Ubuntu-20.04 (Default)
-  ```
-- **Explicação**:
-  - `wsl --list` lista as distribuições Linux instaladas no WSL.
-  - A saída confirmou que o Ubuntu-20.04 estava instalado e definido como padrão (por causa do "(Default)").
-
-### 1.2. Acessar o Ubuntu no WSL
-- **Comando**:
-  ```bash
-  wsl
-  ```
-- **Saída Esperada**:
-  - O terminal muda para o prompt do Ubuntu, algo como:
-    ```
-    sakae@Fabola:~$ 
-    ```
-- **Explicação**:
-  - `wsl` inicia a distribuição padrão (Ubuntu) no terminal do Windows (eu usei o Windows Terminal).
-  - O prompt `sakae@Fabola` indica que estou logada como o usuário `sakae` na máquina `Fabola`.
-
 ## 2. Instalação e Configuração do Nginx
 
 O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitorada pelo script.
@@ -42,71 +19,23 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo apt update
   ```
-- **Saída Esperada**:
-  ```
-  Hit:1 http://archive.ubuntu.com/ubuntu focal InRelease
-  Get:2 http://archive.ubuntu.com/ubuntu focal-updates InRelease [114 kB]
-  ...
-  Fetched 2,123 kB in 2s (1,234 kB/s)
-  Reading package lists... Done
-  ```
-- **Explicação**:
-  - `sudo apt update` atualiza a lista de pacotes disponíveis nos repositórios do Ubuntu.
-  - `sudo` dá privilégios de administrador, necessários para instalar pacotes.
-
 - **Comando**:
   ```bash
   sudo apt upgrade -y
   ```
-- **Saída Esperada**:
-  ```
-  Reading package lists... Done
-  Building dependency tree       
-  Reading state information... Done
-  Calculating upgrade... Done
-  0 upgraded, 0 newly installed, 0 to remove and 0 not upgraded.
-  ```
-- **Explicação**:
-  - `sudo apt upgrade` instala as versões mais recentes dos pacotes.
-  - O `-y` responde "yes" automaticamente para qualquer confirmação, economizando tempo.
-
+  
 ### 2.2. Instalar o Nginx
 - **Comando**:
   ```bash
   sudo apt install nginx -y
   ```
-- **Saída Esperada**:
-  ```
-  Reading package lists... Done
-  Building dependency tree       
-  Reading state information... Done
-  The following additional packages will be installed:
-    nginx-common nginx-core
-  ...
-  Setting up nginx-core (1.18.0-0ubuntu1.2) ...
-  Setting up nginx (1.18.0-0ubuntu1.2) ...
-  ```
-- **Explicação**:
-  - `sudo apt install nginx` instala o Nginx, um servidor web leve.
-  - O `-y` evita que o comando peça confirmação manual.
-
+  
 ### 2.3. Verificar o Status do Nginx
 - **Comando**:
   ```bash
   sudo systemctl status nginx
   ```
-- **Saída Esperada**:
-  ```
-  ● nginx.service - A high performance web server and a reverse proxy server
-     Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
-     Active: active (running) since Mon 2025-04-21 14:00:00 UTC; 1min ago
-     ...
-  ```
-- **Explicação**:
-  - `sudo systemctl status nginx` verifica se o Nginx está rodando.
-  - A linha `Active: active (running)` confirma que o serviço está funcionando.
-  - Se o Nginx não estivesse ativo, eu usaria `sudo systemctl start nginx` para iniciá-lo.
-
+  
 ## 3. Configuração do Diretório e Permissões para o Site
 
 ### 3.1. Criar o Diretório para o Site
@@ -114,19 +43,12 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo mkdir -p /var/www/tkg
   ```
-- **Saída Esperada**:
-  - Nenhuma saída (o comando cria o diretório silenciosamente).
-- **Explicação**:
-  - `sudo mkdir -p /var/www/tkg` cria o diretório `/var/www/tkg`, que será usado para hospedar o arquivo `index.html`.
-  - O `-p` cria os diretórios pai (`/var/www`) se eles não existirem.
 
 ### 3.2. Ajustar as Permissões do Diretório
 - **Comando**:
   ```bash
   sudo chown -R www-data:www-data /var/www/tkg
   ```
-- **Saída Esperada**:
-  - Nenhuma saída (o comando muda o dono silenciosamente).
 - **Explicação**:
   - `sudo chown -R www-data:www-data /var/www/tkg` muda o dono do diretório para o usuário `www-data` (o usuário padrão do Nginx).
   - O `-R` aplica a mudança recursivamente a todos os arquivos e subdiretórios dentro de `/var/www/tkg`.
@@ -135,11 +57,8 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo chmod -R 755 /var/www/tkg
   ```
-- **Saída Esperada**:
-  - Nenhuma saída.
 - **Explicação**:
-  - `sudo chmod -R 755 /var/www/tkg` define as permissões do diretório.
-  - `755` significa: o dono (`www-data`) tem leitura, escrita e execução (7); outros usuários têm leitura e execução (5). Isso permite que o Nginx acesse o diretório.
+   - `755` significa: o dono (`www-data`) tem leitura, escrita e execução (7); outros usuários têm leitura e execução (5). 
 
 ## 4. Criar e Configurar o Arquivo `index.html`
 
@@ -148,8 +67,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo nano /var/www/tkg/index.html
   ```
-- **Saída Esperada**:
-  - O editor Nano abre, permitindo que eu edite o arquivo.
 - **Explicação**:
   - `sudo nano /var/www/tkg/index.html` abre o editor Nano para criar o arquivo `index.html` no diretório `/var/www/tkg`.
   - Usei `sudo` porque o diretório pertence ao usuário `www-data`.
@@ -167,7 +84,7 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
               margin: 0;
               padding: 0;
               font-family: Arial, sans-serif;
-              background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e');
+              background-image: url('https://images.unsplash.com/photo-....');
               background-size: cover;
               background-position: center;
               height: 100vh;
@@ -194,15 +111,13 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   <body>
       <div class="container">
           <h1>Bem-vindo ao Monitoramento de Site</h1>
-          <p>Este site está sendo monitorado a cada minuto.</p>
+          <p>Este site é um site para meu projeto compass de monitoramento.</p>
+          <h2>Welcome to my Monitoring Site</h2>
+          <p>This is a simple site for my monitoring project Compass.</p>
       </div>
   </body>
   </html>
   ```
-- **Explicação**:
-  - Esse arquivo HTML cria uma página estilizada com um fundo de montanha nevada (usando uma imagem do Unsplash), um título (`h1`), e um parágrafo (`p`).
-  - O CSS no `<style>` centraliza o conteúdo, adiciona um fundo semi-transparente ao container, e define fontes e cores.
-  - Salvei o arquivo com `Ctrl + O`, pressionei Enter, e saí do Nano com `Ctrl + X`.
 
 ## 5. Configurar o Nginx para Hospedar o Site
 
@@ -211,8 +126,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo nano /etc/nginx/sites-available/tkg
   ```
-- **Saída Esperada**:
-  - O editor Nano abre.
 - **Explicação**:
   - Isso cria um novo arquivo de configuração chamado `tkg` no diretório `/etc/nginx/sites-available`, onde o Nginx armazena configurações de sites.
 
@@ -228,67 +141,28 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
       }
   }
   ```
-- **Explicação**:
-  - `listen 80`: O Nginx escuta na porta 80 (padrão para HTTP).
-  - `server_name 127.0.0.1`: Define que o site será acessado via `http://127.0.0.1`.
-  - `root /var/www/tkg`: Especifica o diretório onde o `index.html` está.
-  - `index index.html`: Define `index.html` como o arquivo padrão a ser servido.
-  - `location / { try_files $uri $uri/ /index.html; }`: Tenta servir o arquivo solicitado; se não encontrar, serve o `index.html`.
-  - Salvei com `Ctrl + O`, Enter, e saí com `Ctrl + X`.
 
 ### 5.2. Criar um Link Simbólico para Ativar o Site
 - **Comando**:
   ```bash
   sudo ln -s /etc/nginx/sites-available/tkg /etc/nginx/sites-enabled/
   ```
-- **Saída Esperada**:
-  - Nenhuma saída.
-- **Explicação**:
-  - `sudo ln -s` cria um link simbólico do arquivo de configuração no diretório `/etc/nginx/sites-enabled/`, que é onde o Nginx procura configurações ativas.
 
 ### 5.3. Testar a Configuração do Nginx
 - **Comando**:
   ```bash
   sudo nginx -t
   ```
-- **Saída Esperada**:
-  ```
-  nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
-  nginx: configuration file /etc/nginx/nginx.conf test is successful
-  ```
-- **Explicação**:
-  - `sudo nginx -t` verifica se há erros na configuração do Nginx.
-  - A saída confirma que a sintaxe está correta.
-
 ### 5.4. Reiniciar o Nginx
 - **Comando**:
   ```bash
   sudo systemctl restart nginx
   ```
-- **Saída Esperada**:
-  - Nenhuma saída visível (o comando reinicia o serviço silenciosamente).
-- **Explicação**:
-  - `sudo systemctl restart nginx` reinicia o Nginx para aplicar as novas configurações.
-
 ### 5.5. Testar o Site
 - **Comando**:
   ```bash
   curl http://127.0.0.1
   ```
-- **Saída Esperada**:
-  ```
-  <!DOCTYPE html>
-  <html lang="pt-BR">
-  <head>
-      <meta charset="UTF-8">
-      ...
-      <h1>Bem-vindo ao Monitoramento de Site</h1>
-      <p>Este site está sendo monitorado a cada minuto.</p>
-      ...
-  ```
-- **Explicação**:
-  - `curl http://127.0.0.1` faz uma requisição HTTP ao site hospedado no Nginx.
-  - A saída mostra o conteúdo do `index.html`, confirmando que o site está funcionando.
 
 ## 6. Criar o Script de Monitoramento (`monitor_site.sh`)
 
@@ -297,8 +171,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo mkdir -p /opt/scripts
   ```
-- **Saída Esperada**:
-  - Nenhuma saída.
 - **Explicação**:
   - `sudo mkdir -p /opt/scripts` cria o diretório `/opt/scripts`, que será usado para armazenar o script.
 
@@ -307,11 +179,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo nano /opt/scripts/monitor_site.sh
   ```
-- **Saída Esperada**:
-  - O editor Nano abre.
-- **Explicação**:
-  - `sudo nano /opt/scripts/monitor_site.sh` cria o arquivo `monitor_site.sh` no diretório `/opt/scripts`.
-
 - **Conteúdo do Script**:
   ```bash
   #!/bin/bash
@@ -341,36 +208,16 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
       curl -H "Content-Type: application/json" -d "{\"content\": \"$MESSAGE\"}" $DISCORD_WEBHOOK_URL
   fi
   ```
-- **Explicação**:
-  - `#!/bin/bash`: Indica que o script é escrito em Bash.
-  - `URL="http://127.0.0.1"`: Define o site a ser monitorado.
-  - `LOG_FILE="/var/log/monitoramento.log"`: Define o caminho do arquivo de log.
-  - `DISCORD_WEBHOOK_URL`: O webhook do Discord para enviar notificações (configurei isso no canal `#boas-vindas-e-regras` no Discord).
-  - `if [ ! -f "$LOG_FILE" ]`: Verifica se o arquivo de log existe; se não, cria com permissões adequadas.
-  - `STATUS_CODE=$(curl ...)`: Usa `curl` para obter o código de status HTTP do site (`200` significa "OK").
-  - `TIMESTAMP=$(date ...)`: Obtém a data e hora atual.
-  - `if [ "$STATUS_CODE" -eq 200 ]`: Verifica se o site está funcionando (status 200).
-  - `echo ... >> $LOG_FILE`: Registra o resultado (UP ou DOWN) no arquivo de log.
-  - `curl -H ...`: Envia uma notificação ao Discord se o site estiver fora do ar.
-  - Salvei com `Ctrl + O`, Enter, e saí com `Ctrl + X`.
-
 ### 6.3. Ajustar Permissões do Script
 - **Comando**:
   ```bash
   sudo chmod +x /opt/scripts/monitor_site.sh
   ```
-- **Saída Esperada**:
-  - Nenhuma saída.
-- **Explicação**:
-  - `sudo chmod +x /opt/scripts/monitor_site.sh` torna o script executável, permitindo que ele seja rodado como um programa.
-
 ### 6.4. Testar o Script Manualmente
 - **Comando**:
   ```bash
   sudo /opt/scripts/monitor_site.sh
   ```
-- **Saída Esperada**:
-  - Nenhuma saída visível no terminal, mas o arquivo `/var/log/monitoramento.log` é atualizado.
 - **Verificar o Log**:
   ```bash
   cat /var/log/monitoramento.log
@@ -379,10 +226,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```
   2025-04-21 14:10:01 - Site http://127.0.0.1 está UP (Status: 200)
   ```
-- **Explicação**:
-  - Executei o script manualmente para confirmar que ele funcionava.
-  - O log mostrou que o site estava UP (status 200).
-
 ## 7. Configurar o Cron para Executar o Script a Cada Minuto
 
 ### 7.1. Editar o Crontab
@@ -390,26 +233,10 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   crontab -e
   ```
-- **Saída Esperada**:
-  - O editor Nano (ou o editor padrão) abre o arquivo de configuração do cron.
-  - Se for a primeira vez usando `crontab -e`, pode aparecer uma mensagem para escolher o editor:
-    ```
-    Select an editor.  To change later, run 'select-editor'.
-      1. /bin/nano        <---- easiest
-      2. /usr/bin/vim.basic
-      ...
-    ```
-    Escolhi a opção 1 (Nano) digitando `1` e pressionando Enter.
-
 - **Adicionar a Linha no Crontab**:
   ```
   * * * * * /opt/scripts/monitor_site.sh
   ```
-- **Explicação**:
-  - `* * * * *` significa que o script será executado a cada minuto (os cinco asteriscos representam minuto, hora, dia, mês e dia da semana).
-  - `/opt/scripts/monitor_site.sh` é o caminho do script a ser executado.
-  - Salvei com `Ctrl + O`, Enter, e saí com `Ctrl + X`.
-
 ### 7.2. Verificar o Crontab
 - **Comando**:
   ```bash
@@ -430,15 +257,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   mkdir ~/projeto-devsecops
   cd ~/projeto-devsecops
   ```
-- **Saída Esperada**:
-  - Nenhuma saída para `mkdir`.
-  - O prompt muda para:
-    ```
-    sakae@Fabola:~/projeto-devsecops$
-    ```
-- **Explicação**:
-  - `mkdir ~/projeto-devsecops` cria o diretório `projeto-devsecops` no meu diretório home (`~`).
-  - `cd ~/projeto-devsecops` entra nesse diretório para trabalhar nele.
 
 ### 8.2. Copiar os Arquivos para o Diretório
 - **Comandos**:
@@ -448,44 +266,13 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   cp /opt/scripts/monitor_site.sh .
   cp /var/spool/cron/crontabs/$USER ./crontab.txt
   ```
-- **Saída Esperada**:
-  - Nenhuma saída para os comandos `cp`.
-- **Explicação**:
-  - `cp /var/www/tkg/index.html .`: Copia o arquivo `index.html` para o diretório atual (`.`).
-  - `cp /etc/nginx/sites-available/tkg ./nginx-default.conf`: Copia a configuração do Nginx e renomeia para `nginx-default.conf`.
-  - `cp /opt/scripts/monitor_site.sh .`: Copia o script de monitoramento.
-  - `cp /var/spool/cron/crontabs/$USER ./crontab.txt`: Copia o arquivo de configuração do cron do meu usuário (`$USER` é uma variável que representa meu nome de usuário, `sakae`) e renomeia para `crontab.txt`.
-
-### 8.3. Verificar os Arquivos Copiados
-- **Comando**:
-  ```bash
-  ls -l
-  ```
-- **Saída Esperada**:
-  ```
-  total 16
-  -rw-r--r-- 1 sakae sakae  39 Apr 19 18:36 crontab.txt
-  -rwxr-xr-x 1 sakae sakae 1943 Apr 21 13:52 index.html
-  -rwxr-xr-x 1 sakae sakae  872 Apr 19 18:48 monitor_site.sh
-  -rw-r--r-- 1 sakae sakae  2412 Apr 19 18:31 nginx-default.conf
-  ```
-- **Explicação**:
-  - `ls -l` lista os arquivos no diretório com detalhes (permissões, dono, tamanho, data).
-  - Confirmei que os quatro arquivos foram copiados corretamente.
-
-## 9. Configurar o Git e Enviar os Arquivos para o GitHub
+##9. Configurar o Git e Enviar os Arquivos para o GitHub
 
 ### 9.1. Inicializar o Repositório Git
 - **Comando**:
   ```bash
   git init
   ```
-- **Saída Esperada**:
-  ```
-  Initialized empty Git repository in /home/sakae/projeto-devsecops/.git/
-  ```
-- **Explicação**:
-  - `git init` inicializa um novo repositório Git no diretório `projeto-devsecops`, criando a pasta oculta `.git`.
 
 - **Comando**:
   ```bash
@@ -510,10 +297,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   git config --global user.name "Sakae"
   ```
-- **Saída Esperada**:
-  - Nenhuma saída.
-- **Explicação**:
-  - Define meu nome como `Sakae` para todos os repositórios.
 
 - **Erro Encontrado**:
   Quando tentei fazer o primeiro commit sem configurar o nome e e-mail, recebi o erro:
@@ -540,10 +323,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   git add .
   ```
-- **Saída Esperada**:
-  - Nenhuma saída.
-- **Explicação**:
-  - `git add .` adiciona todos os arquivos no diretório (`crontab.txt`, `index.html`, `monitor_site.sh`, `nginx-default.conf`) ao controle de versão do Git.
 
 - **Comando**:
   ```bash
@@ -558,8 +337,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
    create mode 100644 monitor_site.sh
    create mode 100644 nginx-default.conf
   ```
-- **Explicação**:
-  - `git commit -m` cria um commit com a mensagem especificada, registrando as mudanças no repositório.
 
 ### 9.4. Configurar o Repositório Remoto no GitHub
 - **Comando**:
@@ -595,13 +372,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   git remote -v
   ```
-- **Saída Esperada**:
-  ```
-  origin  https://github.com/fabsakae/Linux_Compass.git (fetch)
-  origin  https://github.com/fabsakae/Linux_Compass.git (push)
-  ```
-- **Explicação**:
-  - `git remote -v` lista os remotos configurados, confirmando que `origin` aponta para a URL correta.
 
 ### 9.5. Enviar os Arquivos para o GitHub
 - **Comando**:
@@ -650,19 +420,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   * [new branch]      main -> main
   Branch 'main' set up to track remote branch 'main' from 'origin'.
   ```
-- **Explicação**:
-  - O push foi bem-sucedido após usar o token.
-  - `-u` configura a branch `main` local para rastrear a branch `main` remota.
-
-### 9.6. Armazenar Credenciais para Futuro
-- **Comando**:
-  ```bash
-  git config --global credential.helper store
-  ```
-- **Saída Esperada**:
-  - Nenhuma saída.
-- **Explicação**:
-  - `git config --global credential.helper store` salva minhas credenciais (usuário e token) em um arquivo (`~/.git-credentials`), para que eu não precise digitá-las novamente em futuros pushes.
 
 ## 10. Criar Capturas de Tela e Fazer Upload para o GitHub
 
@@ -671,22 +428,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   cat /var/log/monitoramento.log
   ```
-- **Saída Esperada**:
-  ```
-  2025-04-21 14:10:01 - Site http://127.0.0.1 está UP (Status: 200)
-  2025-04-21 14:11:01 - Site http://127.0.0.1 está DOWN (Status: 503)
-  2025-04-21 14:12:01 - Site http://127.0.0.1 está UP (Status: 200)
-  ```
-- **Explicação**:
-  - `cat /var/log/monitoramento.log` exibe o conteúdo do arquivo de log, mostrando o histórico de verificações do script.
-  - Para testar o caso de "DOWN", parei o Nginx temporariamente (`sudo systemctl stop nginx`), executei o script manualmente, e reiniciei o Nginx (`sudo systemctl start nginx`).
-
-- **Tirar a Captura de Tela**:
-  - Como estou usando o WSL no Windows Terminal, o terminal é exibido no Windows.
-  - Pressionei **Print Screen** para capturar a tela do terminal mostrando o log.
-  - Abri o Paint (pressionando `Win + S`, digitando "Paint", e abrindo o aplicativo).
-  - Colei a captura com `Ctrl + V`.
-  - Salvei como `log_screenshot.png` na área de trabalho (`C:\Users\MeuUsuario\Desktop\log_screenshot.png`).
 
 ### 10.2. Captura de Tela das Notificações no Discord
 - Acessei o Discord no navegador (ou aplicativo do Windows).
@@ -708,40 +449,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   Adiciona capturas de tela do log e notificações do Discord
   ```
 - Cliquei em **Commit changes**.
-
-## 11. Criar o `README.md` no GitHub
-
-- Na página principal do repositório, cliquei em **Add a README**.
-- Adicionei o seguinte conteúdo:
-  ```markdown
-  # Projeto Linux Compass
-
-  Este é um projeto de monitoramento de sites desenvolvido como parte de um curso de DevSecOps. O objetivo é monitorar a disponibilidade de um site local e enviar notificações via Discord quando ele está fora do ar.
-
-  ## Funcionalidades
-  - **Monitoramento de Site**: Um script Bash (`monitor_site.sh`) verifica a cada minuto se o site `http://127.0.0.1` está disponível.
-  - **Notificações no Discord**: Quando o site está fora do ar, uma notificação é enviada para o canal `#boas-vindas-e-regras` no Discord.
-  - **Página Web**: Uma página HTML estilizada (`index.html`) é hospedada no Nginx para testes, com um fundo de montanha nevada e design moderno.
-
-  ## Estrutura do Projeto
-  - `monitor_site.sh`: Script de monitoramento.
-  - `index.html`: Página web de teste.
-  - `crontab.txt`: Configuração do cron para agendamento.
-  - `nginx-default.conf`: Configuração do Nginx.
-
-  ## Como Executar
-  1. Configure o Nginx e coloque o `index.html` em `/var/www/tkg/`.
-  2. Copie o `monitor_site.sh` para `/opt/scripts/` e ajuste as permissões.
-  3. Configure o cron para executar o script a cada minuto.
-  4. Crie um webhook no Discord e configure a variável `DISCORD_WEBHOOK_URL` no script wrapper `run_monitor_site.sh`.
-
-  ## Capturas de Tela
-  - **Log de Monitoramento**:
-    ![Log de Monitoramento](log_screenshot.png)
-  - **Notificação no Discord**:
-    ![Notificação no Discord](discord_screenshot.png)
-  ```
-- Cliquei em **Commit new file**.
 
 ## 12. Lições Aprendidas e Desafios Superados
 
@@ -774,4 +481,4 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
 
 ## 13. Conclusão
 
-Este projeto foi uma ótima oportunidade para aprender sobre servidores web (Nginx), automação com scripts Bash, agendamento de tarefas (cron), controle de versão (Git), e colaboração online (GitHub). Superei desafios técnicos, como erros de configuração no Git, e aprendi a documentar meu trabalho de forma clara e detalhada. Estou pronta para apresentar o projeto ao Thiago e responder a quaisquer perguntas!
+Este projeto foi uma ótima oportunidade para aprender sobre servidores web (Nginx), automação com scripts Bash, agendamento de tarefas (cron), controle de versão (Git), e colaboração online (GitHub).
