@@ -1,6 +1,6 @@
 # Passo a Passo Detalhado do Projeto de Monitoramento de Sites
 
-Este documento detalha todas as etapas realizadas no projeto de monitoramento de sites, desenvolvido como parte de um curso de DevSecOps. O objetivo do projeto era criar um script que verifica a disponibilidade de um site local a cada minuto e envia notificações ao Discord se o site estiver fora do ar. O projeto foi executado no Windows Subsystem for Linux (WSL) com Ubuntu, e este documento foi prepararado incluindo todos os comandos, saídas, erros encontrados, soluções aplicadas e explicações completas.
+Este documento detalha todas as etapas realizadas no projeto de monitoramento de sites, desenvolvido como parte de um curso de DevSecOps. O objetivo do projeto era criar um script que verifica a disponibilidade de um site local a cada minuto e envia notificações ao Discord se o site estiver fora do ar. O projeto foi executado no Windows Subsystem for Linux (WSL) com Ubuntu, e este documento foi prepararado incluindo todos os comandos.
 
 ## 1. Configuração Inicial do Ambiente no WSL com Ubuntu
 
