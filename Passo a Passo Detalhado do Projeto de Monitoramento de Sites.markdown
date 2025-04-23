@@ -47,10 +47,10 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
 ### 3.2. Ajustar as Permissões do Diretório
 - **Comando**:
   ```bash
-  sudo chown -R www-data:www-data /var/www/tkg
+  sudo chown -R www-sakae:www-sakae /var/www/tkg
   ```
 - **Explicação**:
-  - `sudo chown -R www-data:www-data /var/www/tkg` muda o dono do diretório para o usuário `www-data` (o usuário padrão do Nginx).
+  - `sudo chown -R www-data:www-sakae /var/www/tkg` muda o dono do diretório para o usuário `www-sakae` (o usuário padrão do Nginx).
   - O `-R` aplica a mudança recursivamente a todos os arquivos e subdiretórios dentro de `/var/www/tkg`.
 
 - **Comando**:
@@ -191,7 +191,7 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   # Verificar se o arquivo de log existe, se não, criá-lo
   if [ ! -f "$LOG_FILE" ]; then
       sudo touch "$LOG_FILE"
-      sudo chown www-data:www-data "$LOG_FILE"
+      sudo chown www-sakae:www-sakae "$LOG_FILE"
       sudo chmod 644 "$LOG_FILE"
   fi
 
