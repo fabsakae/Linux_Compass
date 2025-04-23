@@ -56,9 +56,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo chmod -R 755 /var/www/tkg
   ```
-- **Explicação**:
-   - `755` significa: o dono (`www-data`) tem leitura, escrita e execução (7); outros usuários têm leitura e execução (5). 
-
 ## 4. Criar e Configurar o Arquivo `index.html`
 
 ### 4.1. Criar o Arquivo `index.html`
