@@ -47,7 +47,10 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
 ### 3.2. Ajustar as Permissões do Diretório
 - **Comando**:
   ```bash
-  sudo chown -R www-sakae:www-sakae /var/www/tkg
+  sudo chown sakae:sakae /opt/scripts
+  sudo chmod 755 /opt/scripts
+  sudo chown sakae:sakae /opt/scripts/monitor_site.sh
+  sudo chmod 755 /opt/scripts/monitor_site.sh
   ```
 - **Comando**:
   ```bash
@@ -194,13 +197,17 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   # Verificar o status do site
   STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$URL" --connect-timeout 5)
   
-  # Verificar se o site está UP ou DOWN
+  # Verificar o status do site
   if [ "$STATUS_CODE" -eq 200 ]; then
-      echo "$TIMESTAMP - Site $URL está UP (Status: $STATUS_CODE)" >> $LOG_FILE
+    echo "[$TIMESTAMP] Site $URL está OK (Status: $STATUS_CODE)" >> "$LOG_FILE"
   else
-      echo "$TIMESTAMP - Site $URL está DOWN (Status: $STATUS_CODE)" >> $LOG_FILE
-      MESSAGE="Site $URL está DOWN! (Status: $STATUS_CODE) em $TIMESTAMP"
-      curl -H "Content-Type: application/json" -d "{\"content\": \"$MESSAGE\"}" $DISCORD_WEBHOOK_URL
+    echo "[$TIMESTAMP] Site $URL está FORA DO AR (Status: $STATUS_CODE)" >> "$LOG_FILE"
+  
+    # Enviar notificação ao Discord
+    curl -H "Content-Type: application/json" \
+         -X POST \
+         -d "{\"content\": \"🚨 ALERTA: Site $URL está FORA DO AR! Status: $STATUS_CODE em $TIMESTAMP\"}" \
+         "$WEBHOOK_URL"
   fi
   ```
 ### 6.3. Ajustar Permissões do Script
