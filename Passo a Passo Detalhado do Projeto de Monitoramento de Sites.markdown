@@ -49,10 +49,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo chown -R www-sakae:www-sakae /var/www/tkg
   ```
-- **Explicação**:
-  - `sudo chown -R www-data:www-sakae /var/www/tkg` muda o dono do diretório para o usuário `www-sakae` (o usuário padrão do Nginx).
-  - O `-R` aplica a mudança recursivamente a todos os arquivos e subdiretórios dentro de `/var/www/tkg`.
-
 - **Comando**:
   ```bash
   sudo chmod -R 755 /var/www/tkg
@@ -181,24 +177,23 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```
 - **Conteúdo do Script**:
   ```bash
+  
   #!/bin/bash
 
   # Variáveis
   URL="http://127.0.0.1"
   LOG_FILE="/var/log/monitoramento.log"
-  DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/..."
-
-  # Verificar se o arquivo de log existe, se não, criá-lo
-  if [ ! -f "$LOG_FILE" ]; then
-      sudo touch "$LOG_FILE"
-      sudo chown www-sakae:www-sakae "$LOG_FILE"
-      sudo chmod 644 "$LOG_FILE"
-  fi
-
-  # Obter o código de status HTTP do site
-  STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" $URL)
+  WEBHOOK_URL="$DISCORD_WEBHOOK_URL"
   TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 
+  # Verificar se o arquivo de log existe, se não, criá-lo
+  if [ ! -d "/var/log" ]; then
+    sudo mkdir -p /var/log
+    sudo chmod 755 /var/log
+  fi
+  # Verificar o status do site
+  STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$URL" --connect-timeout 5)
+  
   # Verificar se o site está UP ou DOWN
   if [ "$STATUS_CODE" -eq 200 ]; then
       echo "$TIMESTAMP - Site $URL está UP (Status: $STATUS_CODE)" >> $LOG_FILE
