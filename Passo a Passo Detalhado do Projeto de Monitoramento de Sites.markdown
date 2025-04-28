@@ -120,11 +120,8 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
 ### 5.1. Criar o Arquivo de Configuração do Nginx
 - **Comando**:
   ```bash
-  sudo nano /etc/nginx/sites-available/tkg
+  sudo nano /etc/nginx/sites-available/tkg.conf
   ```
-- **Explicação**:
-  - Isso cria um novo arquivo de configuração chamado `tkg` no diretório `/etc/nginx/sites-available`, onde o Nginx armazena configurações de sites.
-
 - **Conteúdo do Arquivo**:
   ```nginx
   server {
@@ -154,12 +151,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo systemctl restart nginx
   ```
-### 5.5. Testar o Site
-- **Comando**:
-  ```bash
-  curl http://127.0.0.1
-  ```
-
 ## 6. Criar o Script de Monitoramento (`monitor_site.sh`)
 
 ### 6.1. Criar o Diretório para o Script
@@ -167,9 +158,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo mkdir -p /opt/scripts
   ```
-- **Explicação**:
-  - `sudo mkdir -p /opt/scripts` cria o diretório `/opt/scripts`, que será usado para armazenar o script.
-
 ### 6.2. Criar o Script
 - **Comando**:
   ```bash
@@ -203,7 +191,7 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
     # Enviar notificação ao Discord
     curl -H "Content-Type: application/json" \
          -X POST \
-         -d "{\"content\": \"🚨 ALERTA: Site $URL está FORA DO AR! Status: $STATUS_CODE em $TIMESTAMP\"}" \
+         -d "{\"content\": \">>> ALERTA: Site $URL está FORA DO AR! Status: $STATUS_CODE em $TIMESTAMP\"}" \
          "$WEBHOOK_URL"
   fi
   ```
@@ -241,13 +229,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   crontab -l
   ```
-- **Saída Esperada**:
-  ```
-  * * * * * /opt/scripts/monitor_site.sh
-  ```
-- **Explicação**:
-  - `crontab -l` lista as tarefas agendadas no cron, confirmando que a configuração foi aplicada.
-
 ## 8. Criar o Diretório do Projeto e Copiar os Arquivos
 
 ### 8.1. Criar o Diretório do Projeto
@@ -272,51 +253,19 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   git init
   ```
-
 - **Comando**:
   ```bash
   git branch -M main
   ```
-- **Saída Esperada**:
-  - Nenhuma saída.
-- **Explicação**:
-  - `git branch -M main` renomeia a branch padrão de `master` para `main`, que é a convenção moderna no GitHub.
-
 ### 9.2. Configurar Nome e E-mail no Git
 - **Comando**:
   ```bash
   git config --global user.email "sakae@example.com"
   ```
-- **Saída Esperada**:
-  - Nenhuma saída.
-- **Explicação**:
-  - Define meu e-mail como `sakae@example.com` para todos os repositórios no meu computador (`--global`).
-
 - **Comando**:
   ```bash
   git config --global user.name "Sakae"
   ```
-
-- **Erro Encontrado**:
-  Quando tentei fazer o primeiro commit sem configurar o nome e e-mail, recebi o erro:
-  ```
-  Author identity unknown
-
-  *** Please tell me who you are.
-
-  Run
-
-    git config --global user.email "you@example.com"
-    git config --global user.name "Your Name"
-
-  to set your account's default identity.
-  Omit --global to set the identity only in this repository.
-
-  fatal: empty ident name (for <sakae@Fabola.>) not allowed
-  ```
-- **Solução**:
-  - Executei os comandos `git config` acima para definir meu nome e e-mail, resolvendo o problema.
-
 ### 9.3. Adicionar e Commitar os Arquivos
 - **Comando**:
   ```bash
@@ -327,45 +276,11 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   git commit -m "Adiciona arquivos iniciais do projeto de monitoramento"
   ```
-- **Saída Esperada**:
-  ```
-  [main (root-commit) 1234567] Adiciona arquivos iniciais do projeto de monitoramento
-   4 files changed, 100 insertions(+)
-   create mode 100644 crontab.txt
-   create mode 100644 index.html
-   create mode 100644 monitor_site.sh
-   create mode 100644 nginx-default.conf
-  ```
-
 ### 9.4. Configurar o Repositório Remoto no GitHub
 - **Comando**:
   ```bash
-  git remote add origin https://github.com/fabsakae/Linux_Compass
-  ```
-- **Erro Encontrado**:
-  Inicialmente, usei a URL sem `.git` no final, e isso causou problemas mais tarde. A URL correta é:
-  ```bash
   git remote add origin https://github.com/fabsakae/Linux_Compass.git
   ```
-- **Solução**:
-  - Removi o remoto incorreto:
-    ```bash
-    git remote rm origin
-    ```
-    Mas recebi o erro:
-    ```
-    error: No such remote: 'origin'
-    ```
-    Isso aconteceu porque o comando `git remote add` anterior foi digitado incorretamente (sem o nome `origin`):
-    ```bash
-    git remote add https://github.com/fabsakae/Linux_Compass.git
-    ```
-    A sintaxe correta é `git remote add <nome> <URL>`. Corrigi executando o comando correto:
-    ```bash
-    git remote add origin https://github.com/fabsakae/Linux_Compass.git
-    ```
-- **Saída Esperada**:
-  - Nenhuma saída para `git remote add`.
 
 - **Verificar o Remoto**:
   ```bash
@@ -404,42 +319,8 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   git push -u origin main
   ```
-- **Autenticação**:
-  - **Username**: Digitei `fabsakae`.
-  - **Password**: Colei o token (`ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`).
-- **Saída Esperada**:
-  ```
-  Enumerating objects: 6, done.
-  Counting objects: 100% (6/6), done.
-  Delta compression using up to 4 threads
-  Compressing objects: 100% (5/5), done.
-  Writing objects: 100% (6/6), 1.23 KiB | 1.23 MiB/s, done.
-  Total 6 (delta 0), reused 0 (delta 0), pack-reused 0
-  To https://github.com/fabsakae/Linux_Compass.git
-  * [new branch]      main -> main
-  Branch 'main' set up to track remote branch 'main' from 'origin'.
-  ```
 
-## 10. Criar Capturas de Tela e Fazer Upload para o GitHub
-
-### 10.1. Captura de Tela do Log de Monitoramento
-- **Comando**:
-  ```bash
-  cat /var/log/monitoramento.log
-  ```
-
-### 10.2. Captura de Tela das Notificações no Discord
-- Acessei o Discord no navegador (ou aplicativo do Windows).
-- Fui para o servidor e o canal `#boas-vindas-e-regras`, onde configurei o webhook para enviar notificações.
-- **Mensagem no Discord** (exemplo):
-  ```
-  Site http://127.0.0.1 está DOWN! (Status: 503) em 2025-04-21 14:11:01
-  ```
-- **Tirar a Captura de Tela**:
-  - Pressionei **Print Screen** para capturar a tela do Discord.
-  - Abri o Paint, colei com `Ctrl + V`, e salvei como `discord_screenshot.png` na área de trabalho (`C:\Users\MeuUsuario\Desktop\discord_screenshot.png`).
-
-### 10.3. Fazer Upload no GitHub
+### 10. Fazer Upload no GitHub
 - Acessei o repositório no GitHub: `https://github.com/fabsakae/Linux_Compass`.
 - Cliquei em **Add file > Upload files**.
 - Arrastei os arquivos `log_screenshot.png` e `discord_screenshot.png` da área de trabalho para a área de upload.
@@ -453,7 +334,7 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
 
 - **Configuração do Ambiente**:
   - Aprendi a usar o WSL com Ubuntu para executar comandos Linux no Windows.
-  - Descobri como acessar arquivos do Windows a partir do WSL (ex.: `/mnt/c/Users/MeuUsuario/Desktop`).
+  - Descobri como acessar arquivos do Windows a partir do WSL.
 
 - **Nginx**:
   - Instalei e configurei o Nginx para hospedar um site local.
@@ -462,17 +343,21 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
 - **Script de Monitoramento**:
   - Escrevi um script Bash que usa `curl` para verificar o status de um site e envia notificações ao Discord.
   - Configurei o cron para executar o script a cada minuto.
-
-- **Git e GitHub**:
+    
+- **Variável de ambiente**:
+  ``` bash
+  nano ~/.bashrc
+  ```
+  ```
+  export DISCORD_WEBHOOK_URL= "HTTPS://discord..."
+  ```
+  ```
+  sourse ~/.bashrc
+  ```
+  - **Git e GitHub**:
   - Inicializei um repositório Git, configurei meu nome e e-mail, e enviei os arquivos para o GitHub.
   - Resolvi problemas como:
-    - **Erro de identidade no Git**: Configurei `user.name` e `user.email`.
-    - **Erro na URL do remoto**: Corrigi a URL adicionando `.git` e usando a sintaxe correta (`git remote add origin`).
     - **Erro de autenticação no GitHub**: Criei um token de acesso pessoal para autenticar o `git push`.
-
-- **Capturas de Tela**:
-  - Aprendi a tirar capturas de tela no WSL capturando o terminal do Windows com **Print Screen** e salvando no Paint.
-  - Fiz upload das capturas diretamente no GitHub.
 
 - **Documentação**:
   - Criei um `README.md` para documentar o projeto e exibir as capturas de tela.
