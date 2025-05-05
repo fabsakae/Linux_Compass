@@ -63,9 +63,6 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
   ```bash
   sudo nano /var/www/tkg/index.html
   ```
-- **Explicação**:
-  - `sudo nano /var/www/tkg/index.html` abre o editor Nano para criar o arquivo `index.html` no diretório `/var/www/tkg`.
-  - Usei `sudo` porque o diretório pertence ao usuário `www-data`.
 
 - **Conteúdo do `index.html`**:
   ```html
