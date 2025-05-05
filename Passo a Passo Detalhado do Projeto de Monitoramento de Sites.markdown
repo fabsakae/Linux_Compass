@@ -135,7 +135,7 @@ O Nginx foi usado para hospedar uma página web (`index.html`) que seria monitor
 ### 5.2. Criar um Link Simbólico para Ativar o Site
 - **Comando**:
   ```bash
-  sudo ln -s /etc/nginx/sites-available/tkg /etc/nginx/sites-enabled/
+  sudo ln -s /etc/nginx/sites-available/tkg.conf /etc/nginx/sites-enabled/tkg.conf
   ```
 
 ### 5.3. Testar a Configuração do Nginx
