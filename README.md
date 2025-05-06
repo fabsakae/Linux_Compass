@@ -25,5 +25,5 @@ Este é um projeto de monitoramento de sites desenvolvido como parte de um curso
 - **Notificação no Discord**:
   ![Notificação no Discord](discord_screenshot.png)
 - **Meu site**:
-  ![Meusite](meusite_sreenshot.png)
+  ![Meusite](meusite_screenshot.png)
 ## Consulte Passo a Passo detalhado.
