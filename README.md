@@ -1,4 +1,4 @@
-# Monitoramnento de Site a cada miniuto.
+# Projeto SRE: Sistema automatizado de monitoramento e alerta de sites.
 
 Este é um projeto de monitoramento de sites desenvolvido como parte do estágio de DevSecOps. O objetivo é monitorar a disponibilidade de um site local e enviar notificações via Discord quando ele está fora do ar.
 
