@@ -1,6 +1,6 @@
-# Projeto Linux Compass
+# Monitoramnento de Site a cada miniuto.
 
-Este é um projeto de monitoramento de sites desenvolvido como parte de um curso de DevSecOps. O objetivo é monitorar a disponibilidade de um site local e enviar notificações via Discord quando ele está fora do ar.
+Este é um projeto de monitoramento de sites desenvolvido como parte do estágio de DevSecOps. O objetivo é monitorar a disponibilidade de um site local e enviar notificações via Discord quando ele está fora do ar.
 
 ## Funcionalidades
 - **Monitoramento de Site**: Um script Bash (`monitor_site.sh`) verifica a cada minuto se o site `http://127.0.0.1` está disponível.
